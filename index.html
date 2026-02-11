@@ -2,61 +2,43 @@
 <html lang="it">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Easy Radio Playlist - Licenza</title>
+<title>Generatore Licenza EasyRadioPlaylist</title>
 <style>
-    body { font-family: Arial, sans-serif; background: #f5f5f5; display: flex; justify-content: center; align-items: center; height: 100vh; }
-    .container { background: #fff; padding: 30px; border-radius: 10px; box-shadow: 0 0 15px rgba(0,0,0,0.2); width: 350px; text-align: center; }
-    h1 { font-size: 22px; margin-bottom: 20px; }
-    input { width: 100%; padding: 10px; margin: 10px 0; font-size: 16px; border-radius: 5px; border: 1px solid #ccc; }
-    button { padding: 10px 20px; font-size: 16px; border-radius: 5px; border: none; background: #007BFF; color: #fff; cursor: pointer; }
-    button:hover { background: #0056b3; }
+body { font-family: Arial, sans-serif; margin: 50px; }
+input, button { font-size: 16px; padding: 5px; margin: 5px 0; }
+#license { font-weight: bold; color: green; margin-top: 10px; }
 </style>
 </head>
 <body>
 
-<div class="container">
-    <h1>Easy Radio Playlist - Licenza</h1>
-    <label for="pcId">ID PC:</label>
-    <input type="text" id="pcId" readonly>
-    <label for="license">Licenza:</label>
-    <input type="text" id="license" readonly>
-    <button id="btnGenerate">Genera Licenza</button>
-</div>
+<h1>Generatore Licenza EasyRadioPlaylist FULL</h1>
 
+<label for="pcid">Inserisci ID PC:</label><br>
+<input type="text" id="pcid" placeholder="Esempio: 123456789012"><br>
+
+<button onclick="generateLicense()">Genera Licenza</button>
+
+<p>Licenza generata:</p>
+<div id="license">---</div>
+
+<script src="https://cdn.jsdelivr.net/npm/js-sha256@0.9.0/src/sha256.min.js"></script>
 <script>
-    // Funzione hash semplice
-    function simpleHash(str) {
-        let hash = 0;
-        for (let i = 0; i < str.length; i++) {
-            hash = (hash << 5) - hash + str.charCodeAt(i);
-            hash |= 0;
-        }
-        return Math.abs(hash).toString(16).toUpperCase();
+function generateLicense() {
+    const pcId = document.getElementById("pcid").value.trim();
+    if(pcId === "") {
+        alert("Inserisci l'ID del PC!");
+        return;
     }
 
-    // Prende ID dalla URL
-    function getPcId() {
-        const params = new URLSearchParams(window.location.search);
-        return params.get('id') || 'TEST-PC-123';
-    }
+    const SECRET = "ERP-FULL-2026";  // deve corrispondere al segreto dell'EXE
+    const hash = sha256(pcId + SECRET);
+    const license = hash.substring(0, 12).toUpperCase();
 
-    const pcInput = document.getElementById('pcId');
-    const licenseInput = document.getElementById('license');
-    const btn = document.getElementById('btnGenerate');
-
-    // Mostra l'ID PC
-    const pcId = getPcId();
-    pcInput.value = pcId;
-
-    // Bottone genera licenza
-    btn.addEventListener('click', () => {
-        const SECRET = 'ERP-FULL-2026';
-        const license = simpleHash(pcId + SECRET);
-        licenseInput.value = license;
-    });
+    document.getElementById("license").textContent = license;
+}
 </script>
 
 </body>
 </html>
+
 
