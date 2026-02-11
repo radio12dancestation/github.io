@@ -30,8 +30,13 @@ function generateLicense() {
         return;
     }
 
-    const SECRET = "ERP-FULL-2026";  // deve corrispondere al segreto dell'EXE
+    // 🔑 SECRET_KEY deve combaciare con l'EXE
+    const SECRET = "EasyRadioPlaylist2026";
+
+    // Genera hash SHA256
     const hash = sha256(pcId + SECRET);
+
+    // Prende i primi 12 caratteri in maiuscolo
     const license = hash.substring(0, 12).toUpperCase();
 
     document.getElementById("license").textContent = license;
@@ -40,5 +45,4 @@ function generateLicense() {
 
 </body>
 </html>
-
 
