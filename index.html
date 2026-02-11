@@ -6,7 +6,7 @@
 <style>
 body { font-family: Arial, sans-serif; margin: 50px; }
 input, button { font-size: 16px; padding: 5px; margin: 5px 0; }
-#license { font-weight: bold; color: green; margin-top: 10px; }
+#license { font-weight: bold; color: green; width: 300px; }
 </style>
 </head>
 <body>
@@ -19,7 +19,8 @@ input, button { font-size: 16px; padding: 5px; margin: 5px 0; }
 <button onclick="generateLicense()">Genera Licenza</button>
 
 <p>Licenza generata:</p>
-<div id="license">---</div>
+<input type="text" id="license" readonly>
+<button onclick="copyLicense()">Copia Licenza</button>
 
 <script src="https://cdn.jsdelivr.net/npm/js-sha256@0.9.0/src/sha256.min.js"></script>
 <script>
@@ -30,19 +31,21 @@ function generateLicense() {
         return;
     }
 
-    // 🔑 SECRET_KEY deve combaciare con l'EXE
-    const SECRET = "EasyRadioPlaylist2026";
-
-    // Genera hash SHA256
+    const SECRET = "ERP-FULL-2026";  // deve corrispondere al segreto dell'EXE
     const hash = sha256(pcId + SECRET);
-
-    // Prende i primi 12 caratteri in maiuscolo
     const license = hash.substring(0, 12).toUpperCase();
 
-    document.getElementById("license").textContent = license;
+    document.getElementById("license").value = license;
+}
+
+function copyLicense() {
+    const licenseField = document.getElementById("license");
+    licenseField.select();
+    licenseField.setSelectionRange(0, 99999); // per mobile
+    document.execCommand("copy");
+    alert("Licenza copiata negli appunti!");
 }
 </script>
 
 </body>
 </html>
-
