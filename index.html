@@ -5,50 +5,73 @@
 <title>Generatore Licenza EasyRadioPlaylist</title>
 <style>
 body { font-family: Arial, sans-serif; margin: 50px; }
-input, button { font-size: 16px; padding: 5px; margin: 5px 0; }
-#license { font-weight: bold; color: green; width: 400px; }
+input, button, select { font-size: 16px; padding: 5px; margin: 5px 0; }
+#license { font-weight: bold; color: green; width: 300px; }
 </style>
 </head>
 <body>
 
 <h1>Generatore Licenza EasyRadioPlaylist FULL</h1>
 
-<label for="pcid">Inserisci ID PC:</label><br>
+<label for="lang">Seleziona lingua / Select language:</label><br>
+<select id="lang">
+  <option value="IT">Italiano</option>
+  <option value="EN">English</option>
+  <option value="PT">Português</option>
+  <option value="ES">Español</option>
+</select><br>
+
+<label id="label_pcid" for="pcid">Inserisci ID PC:</label><br>
 <input type="text" id="pcid" placeholder="Esempio: 123456789012"><br>
 
-<button onclick="generateLicense()">Genera Licenza</button>
+<button id="btn_generate">Genera Licenza</button>
 
-<p>Licenza generata:</p>
+<p id="label_generated">Licenza generata:</p>
 <input type="text" id="license" readonly>
-<button onclick="copyLicense()">Copia Licenza</button>
+<button id="btn_copy">Copia Licenza</button>
 
 <script src="https://cdn.jsdelivr.net/npm/js-sha256@0.9.0/src/sha256.min.js"></script>
 <script>
+const SECRET = "ERP-FULL-2026"; // DEVE corrispondere al SECRET_KEY del Python
+
+const TEXTS = {
+  IT: {insert:"Inserisci ID PC:", generate:"Genera Licenza", generated:"Licenza generata:", copy:"Copia Licenza"},
+  EN: {insert:"Enter PC ID:", generate:"Generate License", generated:"Generated License:", copy:"Copy License"},
+  PT: {insert:"Insira ID do PC:", generate:"Gerar Licença", generated:"Licença gerada:", copy:"Copiar Licença"},
+  ES: {insert:"Introduce ID del PC:", generate:"Generar Licencia", generated:"Licencia generada:", copy:"Copiar Licencia"}
+};
+
+function updateLanguage() {
+  const lang = document.getElementById("lang").value;
+  document.getElementById("label_pcid").innerText = TEXTS[lang].insert;
+  document.getElementById("btn_generate").innerText = TEXTS[lang].generate;
+  document.getElementById("label_generated").innerText = TEXTS[lang].generated;
+  document.getElementById("btn_copy").innerText = TEXTS[lang].copy;
+}
+
+document.getElementById("lang").addEventListener("change", updateLanguage);
+
 function generateLicense() {
-    const pcId = document.getElementById("pcid").value.trim();
-    if(pcId === "") {
-        alert("Inserisci l'ID del PC!");
-        return;
-    }
-
-    // ✅ Deve corrispondere al SECRET_KEY del programma Python
-    const SECRET = "EASYRADIO_SECRET_2026";
-
-    // Calcolo hash completo senza troncare
-    const hash = sha256(pcId + SECRET);
-    const license = hash.toUpperCase();
-
-    document.getElementById("license").value = license;
+  const pcId = document.getElementById("pcid").value.trim();
+  if(pcId === "") { alert(TEXTS[document.getElementById("lang").value].insert); return; }
+  const hash = sha256(pcId + SECRET);
+  const license = hash.substring(0,12).toUpperCase();
+  document.getElementById("license").value = license;
 }
 
 function copyLicense() {
-    const licenseField = document.getElementById("license");
-    licenseField.select();
-    licenseField.setSelectionRange(0, 99999); // per mobile
-    document.execCommand("copy");
-    alert("Licenza copiata negli appunti!");
+  const licenseField = document.getElementById("license");
+  licenseField.select();
+  licenseField.setSelectionRange(0,99999);
+  document.execCommand("copy");
+  alert("Licenza copiata negli appunti!");
 }
+
+document.getElementById("btn_generate").onclick = generateLicense;
+document.getElementById("btn_copy").onclick = copyLicense;
+updateLanguage(); // imposta lingua iniziale
 </script>
 
 </body>
 </html>
+
